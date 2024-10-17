@@ -25,10 +25,12 @@ iluvatar-print: Makefile $(MLIR_SRC)
 
 run-module: Makefile $(MLIR_SRC)
 	#/home/peter/github/build.iluvatar.debug/tools/iree-run-module --device=iluvatar --input="128x256xf16" --input="256x128xf16" --input="128x128xf32" --module=dump/matmul.vmfb
-	/home/peter/github/build.iluvatar.debug/tools/iree-run-module --device=iluvatar --input="16x16xf16=1.0" --input="16x16xf16=1.0" --input="16x16xf32=1.0" --module=dump/matmul.vmfb
+	#/home/peter/github/build.iluvatar.debug/tools/iree-run-module --device=iluvatar --input="16x16xf16=1.0" --input="16x16xf16=1.0" --input="16x16xf32=1.0" --module=dump/matmul.vmfb
+	/home/peter/github/build.iluvatar.debug/tools/iree-run-module --device=iluvatar --input=@a.npy --input=@b.npy --input=@c.npy --module=dump/matmul.vmfb --output=@res.npy
 
 run-mlir: Makefile $(MLIR_SRC)
-	/home/peter/github/build.iluvatar.debug/tools/iree-run-mlir --device=iluvatar --input="128x256xf16" --input="256x128xf16" --input="128x128xf32" matmul.mlir 
+	#/home/peter/github/build.iluvatar.debug/tools/iree-run-mlir --device=iluvatar --input="128x256xf16" --input="256x128xf16" --input="128x128xf32" matmul.mlir 
+	/home/peter/github/build.iluvatar.debug/tools/iree-run-mlir --device=iluvatar --input=@a.npy --input=@b.npy --input=@c.npy matmul.mlir
 
 
 clean:
