@@ -32,6 +32,13 @@ run-mlir: Makefile $(MLIR_SRC)
 	#/home/peter/github/build.iluvatar.debug/tools/iree-run-mlir --device=iluvatar --input="128x256xf16" --input="256x128xf16" --input="128x128xf32" matmul.mlir 
 	/home/peter/github/build.iluvatar.debug/tools/iree-run-mlir --device=iluvatar --input=@a.npy --input=@b.npy --input=@c.npy matmul.mlir
 
+i8: Makefile $(MLIR_SRC)
+	/home/peter/github/build.iluvatar.debug/tools/iree-compile --iree-hal-target-backends=iluvatar --mlir-elide-resource-strings-if-larger=10 matmul-i8.mlir --iree-hal-dump-executable-binaries-to=/home/peter/github/playground/Matmul/dump --iree-hal-dump-executable-intermediates-to=/home/peter/github/playground/Matmul/dump -o dump/matmul-i8.vmfb
+
+
+i8-print: Makefile $(MLIR_SRC)
+	/home/peter/github/build.iluvatar.debug/tools/iree-compile --iree-hal-target-backends=iluvatar --mlir-elide-resource-strings-if-larger=10 matmul-i8.mlir --iree-hal-dump-executable-binaries-to=/home/peter/github/playground/Matmul/dump --iree-hal-dump-executable-intermediates-to=/home/peter/github/playground/Matmul/dump -o dump/matmul-i8.vmfb  --mlir-print-ir-module-scope --mlir-print-ir-after-all  2>&1 | tee iluvatar.i8.print.after.all
+
 
 clean:
 	rm $(input).llir
