@@ -1,13 +1,20 @@
 import numpy as np
 import subprocess
-m = 256 
-n = 256
-k = 256
+m = 4096 
+n = 4096
+k = 4096
 
+'''
 ABType = np.int8
 CType = np.int32
+VMFile = 'dump-i8/matmul.vmfb'
+Divisor = 128
+'''
+ABType = np.float16
+CType = np.float32
+VMFile = 'dump-f16/matmul.vmfb'
+Divisor = 1000
 
-VMFile = 'dump/matmul-i8.vmfb'
 
 atol=1e-04
 rtol=1e-04
@@ -22,7 +29,7 @@ def SequenceA():
     a = np.ones(m*k, dtype=ABType).reshape((m, k))
     for i in range(m):
         for j in range(k):
-            a[i, j] = (k * i + j) % 128
+            a[i, j] = (k * i + j) / Divisor
     return a
 
 
@@ -30,14 +37,14 @@ def SequenceB():
     b = np.ones(k*n, dtype=ABType).reshape((k, n))
     for j in range(k):
         for i in range(n):
-            b[j, i] = (n * j + i) % 128
+            b[j, i] = (n * j + i) / Divisor
     return b
 
 def SequenceC():
     c = np.ones(m * n, dtype=CType).reshape((m, n))
     for i in range(m):
         for j in range(n):
-            c[i, j] = (n * i + j) % 128
+            c[i, j] = (n * i + j) / Divisor
     return c
 
 def ConstantA(v = 0):
@@ -83,15 +90,15 @@ def IdentityB():
     return b
 
 def RandomA():
-    a = np.random.uniform(low=0, high=128, size=(m, k)).astype(ABType)
+    a = np.random.uniform(low=-128, high=128, size=(m, k)).astype(ABType)
     return a
 
 def RandomB():
-    b = np.random.uniform(low=0, high=128, size=(k, n)).astype(ABType)
+    b = np.random.uniform(low=-128, high=128, size=(k, n)).astype(ABType)
     return b
 
 def RandomC():
-    c = np.random.uniform(low=0, high=128, size=(m, n)).astype(CType)
+    c = np.random.uniform(low=-128, high=128, size=(m, n)).astype(CType)
     return c
 
 #a = np.ones(m*k, dtype=ABType).reshape((m, k))
@@ -104,7 +111,8 @@ def RandomC():
 #
 a = RandomA()
 b = RandomB()
-c = ConstantC(0)
+c = RandomC()
+
 
 #
 # dump operands a, b and c
@@ -156,7 +164,6 @@ else:
     #for index in zip(*not_close_indices):
     #    print("{0}: golden={1}, test={2}\n".format(index, golden[index], res[index]))
 
-exit
 
 # {'edgeitems': 128, 'threshold': 128, 'floatmode': 'maxprec', 'precision': 8, 'suppress': False, 'linewidth': 128, 'nanstr': 'nan', 'infstr': 'inf', 'sign': '-', 'formatter': None, 'legacy': False}
 np.set_printoptions(linewidth=128)
