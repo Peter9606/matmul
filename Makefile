@@ -51,3 +51,8 @@ i8-print: Makefile $(MLIR_SRC)
 clean:
 	rm $(input).llir
 
+profile-f16-4k8k8k:
+	ixsys -o fgemm.4096x8192x8192.ptrace -t NVTX,CUDA,OSRT  python gen_data.py
+
+profile-f16-4k4k4k:
+	ixsys -o fgemm.4096x4096x4096.ptrace -t NVTX,CUDA,OSRT  python gen_data.py
