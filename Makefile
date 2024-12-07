@@ -10,7 +10,7 @@ LLIR_SRC 		:= $(input).llir
 
 F16_DUMP_DIR:= /home/peter/github/playground/Matmul/dump-f16
 I8_DUMP_DIR := /home/peter/github/playground/Matmul/dump-i8
-COMMON_OPS 	:= --iree-hal-target-backends=iluvatar --iree-ilux-index-bits=32 --mlir-elide-resource-strings-if-larger=10 
+COMMON_OPS 	:= --iree-hal-target-backends=iluvatar --iree-ilux-index-bits=32 --mlir-elide-resource-strings-if-larger=10
 F16_OPS 		:= $(COMMON_OPS) --iree-hal-dump-executable-binaries-to=$(F16_DUMP_DIR) --iree-hal-dump-executable-intermediates-to=$(F16_DUMP_DIR)
 I8_OPS 			:= $(COMMON_OPS) --iree-hal-dump-executable-binaries-to=$(I8_DUMP_DIR) --iree-hal-dump-executable-intermediates-to=$(I8_DUMP_DIR)
 
