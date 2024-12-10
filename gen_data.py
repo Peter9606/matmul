@@ -1,8 +1,8 @@
 import numpy as np
 import subprocess
-m = 4096 
-n = 4096
-k = 4096
+m = 512 
+n = 512
+k = 512
 
 '''
 ABType = np.int8
@@ -13,7 +13,7 @@ Divisor = 128
 ABType = np.float16
 CType = np.float32
 VMFile = 'dump-f16/matmul.vmfb'
-Divisor = 1000
+Divisor = 100000
 
 
 atol=1e-04
@@ -90,15 +90,15 @@ def IdentityB():
     return b
 
 def RandomA():
-    a = np.random.uniform(low=-128, high=128, size=(m, k)).astype(ABType)
+    a = np.random.uniform(low=-3, high=3, size=(m, k)).astype(ABType)
     return a
 
 def RandomB():
-    b = np.random.uniform(low=-128, high=128, size=(k, n)).astype(ABType)
+    b = np.random.uniform(low=-3, high=3, size=(k, n)).astype(ABType)
     return b
 
 def RandomC():
-    c = np.random.uniform(low=-128, high=128, size=(m, n)).astype(CType)
+    c = np.random.uniform(low=-3, high=3, size=(m, n)).astype(CType)
     return c
 
 #a = np.ones(m*k, dtype=ABType).reshape((m, k))
@@ -111,7 +111,7 @@ def RandomC():
 #
 a = RandomA()
 b = RandomB()
-c = RandomC()
+c = ConstantC(0)
 
 
 #
@@ -127,7 +127,7 @@ np.save("c.npy", c)
 a_f32 = np.array(a, dtype=CType)
 b_f32 = np.array(b, dtype=CType)
 golden = np.matmul(a_f32, b_f32)
-golden = np.add(golden, c)
+#golden = np.add(golden, c)
 
 np.save("golden.npy", golden)
 np.savetxt("golden.txt", golden, fmt="%3.f")
@@ -140,7 +140,7 @@ result = subprocess.run(
          '--device=iluvatar',
          '--input=@a.npy',
          '--input=@b.npy',
-         '--input=@c.npy',
+         #'--input=@c.npy',
          '--module={0}'.format(VMFile),
          '--output=@res.npy'], capture_output=True, text=True)
 
@@ -160,7 +160,7 @@ if np.allclose(golden, res, atol=atol, rtol=rtol):
 else:
     diff = np.abs(golden - res)
     not_close_indices = np.where(diff > atol + np.abs(golden) * rtol)
-    print(not_close_indices)
+    print(len(not_close_indices[0]))
     #for index in zip(*not_close_indices):
     #    print("{0}: golden={1}, test={2}\n".format(index, golden[index], res[index]))
 

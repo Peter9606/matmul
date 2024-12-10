@@ -1,4 +1,4 @@
-IREE_HOME 	:= /home/peter/github/build.iluvatar.debug
+IREE_HOME 	:= /home/peter/github/build.iluvatar
 COMPILE			:= $(IREE_HOME)/tools/iree-compile
 RUN_MODULE 	:= $(IREE_HOME)/tools/iree-run-module
 RUN_MLIR 		:= $(IREE_HOME)/tools/iree-run-mlir
