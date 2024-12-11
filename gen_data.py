@@ -11,12 +11,12 @@ VMFile = 'dump-i8/matmul.vmfb'
 Divisor = 128
 '''
 ABType = np.float16
-CType = np.float32
+CType = np.float16
 VMFile = 'dump-f16/matmul.vmfb'
 Divisor = 100000
 
 
-atol=1e-04
+atol=1e-03
 rtol=1e-04
 
 np.random.seed(4)
@@ -127,10 +127,10 @@ np.save("c.npy", c)
 a_f32 = np.array(a, dtype=CType)
 b_f32 = np.array(b, dtype=CType)
 golden = np.matmul(a_f32, b_f32)
-#golden = np.add(golden, c)
+golden = np.add(golden, c)
 
 np.save("golden.npy", golden)
-np.savetxt("golden.txt", golden, fmt="%3.f")
+np.savetxt("golden.txt", golden, fmt="%3.5f")
 
 #
 # iree run module and dump result
@@ -147,9 +147,10 @@ result = subprocess.run(
 print(result)
 
 res = np.load("res.npy")
-np.savetxt("res.txt", res, fmt="%3.f")
-np.savetxt("a.txt", a, fmt="%3.f")
-np.savetxt("b.txt", b, fmt="%3.f")
+np.savetxt("res.txt", res, fmt="%3.5f")
+np.savetxt("a.txt", a, fmt="%3.5f")
+np.savetxt("b.txt", b, fmt="%3.5f")
+np.savetxt("c.txt", c, fmt="%3.5f")
 
 #
 # compare result with golden and dump compare result to console

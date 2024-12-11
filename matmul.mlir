@@ -1,27 +1,30 @@
+// Verified on fujun.han/working-on-eliminate-C-shared-memory branch
 // func.func @matmul_1(%lhs : tensor<512x512xf16>, %rhs : tensor<512x512xf16>, %empty : tensor<512x512xf32>) -> tensor<512x512xf32> {
-//  %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%empty: tensor<512x512xf32>) -> tensor<512x512xf32>
-//  return %0 : tensor<512x512xf32>
+//   %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%empty: tensor<512x512xf32>) -> tensor<512x512xf32>
+//   return %0 : tensor<512x512xf32>
 // }
  
+// Verified on fujun.han/working-on-eliminate-C-shared-memory branch
 // func.func @matmul_2(%lhs : tensor<512x512xf16>, %rhs : tensor<512x512xf16>) -> tensor<512x512xf32> {
-//  %c0     = arith.constant 0.0 : f32
-//  %empty  = tensor.empty() : tensor<512x512xf32>
-//  %c      = linalg.fill ins(%c0 : f32) outs(%empty: tensor<512x512xf32>) -> tensor<512x512xf32>
-//  %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%c: tensor<512x512xf32>) -> tensor<512x512xf32>
+//   %c0     = arith.constant 0.0 : f32
+//   %empty  = tensor.empty() : tensor<512x512xf32>
+//   %c      = linalg.fill ins(%c0 : f32) outs(%empty: tensor<512x512xf32>) -> tensor<512x512xf32>
+//   %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%c: tensor<512x512xf32>) -> tensor<512x512xf32>
 // 
-//  return %0 : tensor<512x512xf32>
+//   return %0 : tensor<512x512xf32>
 // }
  
-func.func @matmul_3(%lhs : tensor<512x512xf16>, %rhs : tensor<512x512xf16>) -> tensor<512x512xf16> {
-%c0     = arith.constant 0.0 : f32
-%empty  = tensor.empty() : tensor<512x512xf32>
-%c      = linalg.fill ins(%c0 : f32) outs(%empty: tensor<512x512xf32>) -> tensor<512x512xf32>
-%0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%c: tensor<512x512xf32>) -> tensor<512x512xf32>
-
-// if output f16, need cast tensor core result
-%d      = tosa.cast %0 : (tensor<512x512xf32>) -> tensor<512x512xf16>
-return %d : tensor<512x512xf16>
-}
+// Verified on fujun.han/working-on-eliminate-C-shared-memory branch
+// func.func @matmul_3(%lhs : tensor<512x512xf16>, %rhs : tensor<512x512xf16>) -> tensor<512x512xf16> {
+//   %c0     = arith.constant 0.0 : f32
+//   %empty  = tensor.empty() : tensor<512x512xf32>
+//   %c      = linalg.fill ins(%c0 : f32) outs(%empty: tensor<512x512xf32>) -> tensor<512x512xf32>
+//   %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%c: tensor<512x512xf32>) -> tensor<512x512xf32>
+// 
+//   // if output f16, need cast tensor core result
+//   %d      = tosa.cast %0 : (tensor<512x512xf32>) -> tensor<512x512xf16>
+//   return %d : tensor<512x512xf16>
+// }
 
 // TODO: Error while create async group, LOW PRIORITY
 //
@@ -35,20 +38,20 @@ return %d : tensor<512x512xf16>
 // }
 
 
-
-//func.func @matmul_5(%lhs : tensor<512x512xf16>, %rhs : tensor<512x512xf16>) -> tensor<512x512xf16> {
-//  %c0     = arith.constant 0.0 : f16
-//  %empty  = tensor.empty() : tensor<512x512xf16>
-//  %c      = linalg.fill ins(%c0: f16) outs(%empty: tensor<512x512xf16>) -> tensor<512x512xf16>
-//  %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%empty: tensor<512x512xf16>) -> tensor<512x512xf16>
-//  return %0 : tensor<512x512xf16>
-//}
-
-
-
-//func.func @matmul_6(%lhs : tensor<512x512xf16>, %rhs : tensor<512x512xf16>, %empty : tensor<512x512xf16>) -> tensor<512x512xf16> {
-//  %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%empty: tensor<512x512xf16>) -> tensor<512x512xf16>
-//  return %0 : tensor<512x512xf16>
-//}
+// Verified on fujun.han/working-on-eliminate-C-shared-memory branch
+func.func @matmul_5(%lhs : tensor<512x512xf16>, %rhs : tensor<512x512xf16>) -> tensor<512x512xf16> {
+  %c0     = arith.constant 0.0 : f16
+  %empty  = tensor.empty() : tensor<512x512xf16>
+  %c      = linalg.fill ins(%c0: f16) outs(%empty: tensor<512x512xf16>) -> tensor<512x512xf16>
+  %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%empty: tensor<512x512xf16>) -> tensor<512x512xf16>
+  return %0 : tensor<512x512xf16>
+}
 
 
+// Result ERROR on fujun.han/working-on-eliminate-C-shared-memory branch, because argument C is not B32, we haven't handle this case for vector.transfer_read.
+// func.func @matmul_6(%lhs : tensor<512x512xf16>, %rhs : tensor<512x512xf16>, %empty : tensor<512x512xf16>) -> tensor<512x512xf16> {
+//   %0      = linalg.matmul ins(%lhs, %rhs : tensor<512x512xf16>, tensor<512x512xf16>) outs(%empty: tensor<512x512xf16>) -> tensor<512x512xf16>
+//   return %0 : tensor<512x512xf16>
+// }
+// 
+// 
